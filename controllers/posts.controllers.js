@@ -1,4 +1,4 @@
-const connection = require("../config/db")
+const connection = require("../config/db/db")
 const { stringToObject } = require("../utils/utils")
 
 const getPosts = async (req, res) => {

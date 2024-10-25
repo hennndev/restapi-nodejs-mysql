@@ -1,0 +1,41 @@
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    restart: always
+    env_file:
+      - .env.production
+    ports:
+      - 5000:5000
+    networks:
+      app-network:
+        ipv4_address: 192.168.100.50
+
+  db:
+    container_name: db
+    image: mysql:latest
+    ports:
+      - 3309:3309
+    restart: always
+    volumes:
+      - ./config/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./config/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./config/db/mysql_commands.sh:/docker-entrypoint-initdb.d/mysql_commands.sh
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DB=socialmedia     
+    networks:
+      app-network:
+        ipv4_address: 192.168.100.51
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+          gateway: 192.168.100.1
